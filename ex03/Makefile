@@ -9,6 +9,9 @@ SRC_FILES = main.cpp \
 			Point.cpp \
 			bsp.cpp \
 
+INCLUDE = Fixed.hpp \
+			Point.hpp \
+
 OBJECTS = $(SRC_FILES:.cpp=.o)
 CC = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
