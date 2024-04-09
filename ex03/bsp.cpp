@@ -1,10 +1,6 @@
 #include "Point.hpp"
 
-static float area(float x1, float y1, float x2, float y2, float x3, float y3){
-    return (std::abs((x1*(y2-y3) + x2*(y3-y1)+ x3*(y1-y2))/2.0));
-}
-
-bool bsp( Point const a, Point const b, Point const c, Point const point){
+bool bsp(Point const a, Point const b, Point const c, Point const point) {
 
     const float ax = a.getX().toFloat();
     const float ay = a.getY().toFloat();
@@ -15,15 +11,20 @@ bool bsp( Point const a, Point const b, Point const c, Point const point){
     const float x = point.getX().toFloat();
     const float y = point.getY().toFloat();
 
-    float A = area(ax, ay, bx, by, cx, cy);
+    // Check if the point coincides with any of the vertices
+    if ((x == ax && y == ay) || (x == bx && y == by) || (x == cx && y == cy))
+        return false;
 
-    float A1 = area(x, y, bx, by, cx, cy);
+    // Calculate the areas of the triangles formed by the point and each edge of the triangle
+    // float areaABC = ((ax - cx) * (by - cy) - (ay - cy) * (bx - cx));
+    float areaABP = ((ax - x) * (by - y) - (ay - y) * (bx - x));
+    float areaBCP = ((bx - x) * (cy - y) - (by - y) * (cx - x));
+    float areaCAP = ((cx - x) * (ay - y) - (cy - y) * (ax - x));
 
-    float A2 = area(ax, ay, x, y, cx, cy);
+    // Check if the point lies on any of the edges
+    if (areaABP == 0 || areaBCP == 0 || areaCAP == 0)
+        return false;
 
-    float A3 = area(ax, ay, bx, by, x, y);
-
-    float tolerance = 0.000001;
-
-    return (std::abs(A - (A1 + A2 + A3)) < tolerance);
+    // Check if the point lies strictly inside the triangle
+    return (areaABP > 0 && areaBCP > 0 && areaCAP > 0) || (areaABP < 0 && areaBCP < 0 && areaCAP < 0);
 }
